@@ -9,6 +9,6 @@ Backend application for the Sirma Academy task: **find the pair of football play
 - **spring-boot-starter-webmvc** — REST API (Spring MVC)
 - **spring-boot-devtools** — development tools (runtime, optional)
 - **postgresql** — PostgreSQL driver (runtime)
-- **spring-boot-starter-data-jpa-test** — JPA testing (test)
+- **spring-boot-starter-data-jpa-test** — JPA testing (test
 - **spring-boot-starter-validation-test** — validation testing (test)
 - **spring-boot-starter-webmvc-test** — MVC/API testing (test)

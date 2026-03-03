@@ -1,0 +1,47 @@
+package com.sirma.football_api.dto;
+
+import java.util.List;
+
+public class TeamSideDto {
+
+    private Long id;
+    private String name;
+    private String groupLetter;
+    private List<PlayerShortDto> players;
+
+    public TeamSideDto() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getGroupLetter() {
+        return groupLetter;
+    }
+
+    public void setGroupLetter(String groupLetter) {
+        this.groupLetter = groupLetter;
+    }
+
+    public List<PlayerShortDto> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(List<PlayerShortDto> players) {
+        this.players = players;
+    }
+}
+

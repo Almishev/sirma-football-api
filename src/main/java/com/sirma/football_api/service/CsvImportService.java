@@ -12,6 +12,7 @@ import com.sirma.football_api.repository.MatchRepository;
 import com.sirma.football_api.repository.PlayerRepository;
 import com.sirma.football_api.repository.RecordRepository;
 import com.sirma.football_api.repository.TeamRepository;
+import com.sirma.football_api.service.interfaces.ImportService;
 import com.sirma.football_api.util.DateParseUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

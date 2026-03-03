@@ -1,4 +1,4 @@
-package com.sirma.football_api.service;
+package com.sirma.football_api.service.interfaces;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,3 +14,4 @@ public interface ImportService {
 
     int importRecords(MultipartFile file) throws IOException;
 }
+

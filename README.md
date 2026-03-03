@@ -12,3 +12,8 @@ Backend application for the Sirma Academy task: **find the pair of football play
 - **spring-boot-starter-data-jpa-test** — JPA testing (test
 - **spring-boot-starter-validation-test** — validation testing (test)
 - **spring-boot-starter-webmvc-test** — MVC/API testing (test)
+
+## Import cvs files in this way
+ teams → players → matches → records
+
+ 

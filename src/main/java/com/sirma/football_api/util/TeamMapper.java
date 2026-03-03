@@ -15,7 +15,8 @@ public final class TeamMapper {
 
     public static TeamDetailsDto toTeamDetailsDto(Team team, List<Player> players) {
         List<PlayerShortDto> playerDtos = new ArrayList<>(players.size());
-        for (Player player : players) {
+        for (int i = 0; i < players.size(); i++) {
+            Player player = players.get(i);
             PlayerShortDto dto = new PlayerShortDto();
             dto.setId(player.getId());
             dto.setTeamNumber(player.getTeamNumber());

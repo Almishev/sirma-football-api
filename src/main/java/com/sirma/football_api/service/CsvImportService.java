@@ -50,7 +50,8 @@ public class CsvImportService implements ImportService {
     @Transactional
     public int importTeams(MultipartFile file) throws IOException {
         List<TeamCsvDto> rows = parseTeams(file.getInputStream());
-        for (TeamCsvDto dto : rows) {
+        for (int i = 0; i < rows.size(); i++) {
+            TeamCsvDto dto = rows.get(i);
             if (dto.getId() == null) {
                 throw new IllegalArgumentException("teams.csv row missing ID");
             }
@@ -67,7 +68,8 @@ public class CsvImportService implements ImportService {
     @Transactional
     public int importPlayers(MultipartFile file) throws IOException {
         List<PlayerCsvDto> rows = parsePlayers(file.getInputStream());
-        for (PlayerCsvDto dto : rows) {
+        for (int i = 0; i < rows.size(); i++) {
+            PlayerCsvDto dto = rows.get(i);
             if (dto.getId() == null) {
                 throw new IllegalArgumentException("players.csv row missing ID");
             }
@@ -87,7 +89,8 @@ public class CsvImportService implements ImportService {
     @Transactional
     public int importMatches(MultipartFile file) throws IOException {
         List<MatchCsvDto> rows = parseMatches(file.getInputStream());
-        for (MatchCsvDto dto : rows) {
+        for (int i = 0; i < rows.size(); i++) {
+            MatchCsvDto dto = rows.get(i);
             if (dto.getId() == null) {
                 throw new IllegalArgumentException("matches.csv row missing ID");
             }
@@ -111,7 +114,8 @@ public class CsvImportService implements ImportService {
     public int importRecords(MultipartFile file) throws IOException {
         List<RecordCsvDto> rows = parseRecords(file.getInputStream());
         List<Record> records = new ArrayList<>();
-        for (RecordCsvDto dto : rows) {
+        for (int i = 0; i < rows.size(); i++) {
+            RecordCsvDto dto = rows.get(i);
             if (dto.getId() == null) {
                 throw new IllegalArgumentException("records.csv row missing ID");
             }
@@ -161,7 +165,8 @@ public class CsvImportService implements ImportService {
     private List<TeamCsvDto> parseTeams(InputStream inputStream) throws IOException {
         List<String[]> rows = readCsvLines(inputStream);
         List<TeamCsvDto> result = new ArrayList<>();
-        for (String[] columns : rows) {
+        for (int i = 0; i < rows.size(); i++) {
+            String[] columns = rows.get(i);
             if (columns.length < 4) {
                 throw new IllegalArgumentException("Invalid teams.csv row: expected 4 columns");
             }
@@ -178,7 +183,8 @@ public class CsvImportService implements ImportService {
     private List<PlayerCsvDto> parsePlayers(InputStream inputStream) throws IOException {
         List<String[]> rows = readCsvLines(inputStream);
         List<PlayerCsvDto> result = new ArrayList<>();
-        for (String[] columns : rows) {
+        for (int i = 0; i < rows.size(); i++) {
+            String[] columns = rows.get(i);
             if (columns.length < 5) {
                 throw new IllegalArgumentException("Invalid players.csv row: expected 5 columns");
             }
@@ -196,7 +202,8 @@ public class CsvImportService implements ImportService {
     private List<MatchCsvDto> parseMatches(InputStream inputStream) throws IOException {
         List<String[]> rows = readCsvLines(inputStream);
         List<MatchCsvDto> result = new ArrayList<>();
-        for (String[] columns : rows) {
+        for (int i = 0; i < rows.size(); i++) {
+            String[] columns = rows.get(i);
             if (columns.length < 5) {
                 throw new IllegalArgumentException("Invalid matches.csv row: expected 5 columns");
             }
@@ -214,7 +221,8 @@ public class CsvImportService implements ImportService {
     private List<RecordCsvDto> parseRecords(InputStream inputStream) throws IOException {
         List<String[]> rows = readCsvLines(inputStream);
         List<RecordCsvDto> result = new ArrayList<>();
-        for (String[] columns : rows) {
+        for (int i = 0; i < rows.size(); i++) {
+            String[] columns = rows.get(i);
             if (columns.length < 5) {
                 throw new IllegalArgumentException("Invalid records.csv row: expected 5 columns");
             }

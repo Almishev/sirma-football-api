@@ -26,7 +26,8 @@ public final class DateParseUtil {
             throw new IllegalArgumentException("Date string must not be null or blank");
         }
         String trimmed = dateString.trim();
-        for (DateTimeFormatter formatter : FORMATTERS) {
+        for (int i = 0; i < FORMATTERS.size(); i++) {
+            DateTimeFormatter formatter = FORMATTERS.get(i);
             try {
                 return LocalDate.parse(trimmed, formatter);
             } catch (DateTimeParseException ignored) {

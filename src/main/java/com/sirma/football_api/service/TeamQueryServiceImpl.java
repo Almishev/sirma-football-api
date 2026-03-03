@@ -29,7 +29,8 @@ public class TeamQueryServiceImpl implements TeamQueryService {
     public List<TeamSummaryDto> getAllTeams() {
         List<Team> teams = teamRepository.findAll();
         List<TeamSummaryDto> result = new ArrayList<>(teams.size());
-        for (Team team : teams) {
+        for (int i = 0; i < teams.size(); i++) {
+            Team team = teams.get(i);
             TeamSummaryDto dto = new TeamSummaryDto();
             dto.setId(team.getId());
             dto.setName(team.getName());

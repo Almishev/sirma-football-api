@@ -8,4 +8,6 @@ import java.util.List;
 public interface RecordRepository extends JpaRepository<Record, Long> {
 
     List<Record> findByMatchId(Long matchId);
+
+    List<Record> findByPlayerId(Long playerId);
 }

@@ -9,6 +9,9 @@ import com.sirma.football_api.exception.ResourceNotFoundException;
 import com.sirma.football_api.repository.MatchRepository;
 import com.sirma.football_api.repository.RecordRepository;
 import com.sirma.football_api.util.MatchMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -44,6 +47,32 @@ public class MatchQueryServiceImpl implements MatchQueryService {
 
         List<Record> records = recordRepository.findByMatchId(id);
         return MatchMapper.toMatchDetailsDto(match, records);
+    }
+
+    @Override
+    public Page<MatchSummaryDto> getMatchesPage(Pageable pageable) {
+        Sort originalSort = pageable.getSort().isUnsorted()
+                ? Sort.by(Sort.Direction.ASC, "date")
+                : pageable.getSort();
+
+        // Map UI sort fields to entity fields
+        Sort mappedSort = Sort.by(
+                originalSort.stream()
+                        .map(order -> {
+                            String property = order.getProperty();
+                            if ("groupLetter".equals(property)) {
+                                // Sort by the group letter of the home team
+                                return new Sort.Order(order.getDirection(), "aTeam.groupLetter");
+                            }
+                            return order;
+                        })
+                        .toList()
+        );
+
+        Pageable pageableWithSort = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), mappedSort);
+
+        Page<Match> page = matchRepository.findAll(pageableWithSort);
+        return page.map(MatchMapper::toMatchSummaryDto);
     }
 }
 

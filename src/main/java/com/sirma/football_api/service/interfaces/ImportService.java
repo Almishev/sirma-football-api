@@ -3,6 +3,7 @@ package com.sirma.football_api.service.interfaces;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Map;
 
 public interface ImportService {
 
@@ -13,5 +14,16 @@ public interface ImportService {
     int importMatches(MultipartFile file) throws IOException;
 
     int importRecords(MultipartFile file) throws IOException;
+
+    int deleteRecords();
+
+    int deleteMatches();
+
+    int deletePlayers();
+
+    int deleteTeams();
+
+    /** Deletes all data in dependency order: records → matches → players → teams. Returns deleted counts. */
+    Map<String, Integer> deleteAll();
 }
 

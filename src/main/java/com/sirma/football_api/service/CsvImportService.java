@@ -25,7 +25,10 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class CsvImportService implements ImportService {
@@ -50,8 +53,8 @@ public class CsvImportService implements ImportService {
     @Transactional
     public int importTeams(MultipartFile file) throws IOException {
         List<TeamCsvDto> rows = parseTeams(file.getInputStream());
-        for (int i = 0; i < rows.size(); i++) {
-            TeamCsvDto dto = rows.get(i);
+        List<Team> teams = new ArrayList<>(rows.size());
+        for (TeamCsvDto dto : rows) {
             if (dto.getId() == null) {
                 throw new IllegalArgumentException("teams.csv row missing ID");
             }
@@ -59,8 +62,9 @@ public class CsvImportService implements ImportService {
             team.setName(dto.getName());
             team.setManagerFullName(dto.getManagerFullName());
             team.setGroupLetter(dto.getGroupLetter());
-            teamRepository.save(team);
+            teams.add(team);
         }
+        teamRepository.saveAll(teams);
         return rows.size();
     }
 
@@ -68,20 +72,24 @@ public class CsvImportService implements ImportService {
     @Transactional
     public int importPlayers(MultipartFile file) throws IOException {
         List<PlayerCsvDto> rows = parsePlayers(file.getInputStream());
-        for (int i = 0; i < rows.size(); i++) {
-            PlayerCsvDto dto = rows.get(i);
+        Map<Long, Team> teamMap = teamRepository.findAll().stream().collect(Collectors.toMap(Team::getId, t -> t));
+        List<Player> players = new ArrayList<>(rows.size());
+        for (PlayerCsvDto dto : rows) {
             if (dto.getId() == null) {
                 throw new IllegalArgumentException("players.csv row missing ID");
             }
-            Team team = teamRepository.findById(dto.getTeamId())
-                    .orElseThrow(() -> new IllegalStateException("Team not found for id: " + dto.getTeamId() + ". Import teams first."));
+            Team team = teamMap.get(dto.getTeamId());
+            if (team == null) {
+                throw new IllegalStateException("Team not found for id: " + dto.getTeamId() + ". Import teams first.");
+            }
             Player player = new Player();
             player.setTeamNumber(dto.getTeamNumber());
             player.setPosition(dto.getPosition());
             player.setFullName(dto.getFullName());
             player.setTeam(team);
-            playerRepository.save(player);
+            players.add(player);
         }
+        playerRepository.saveAll(players);
         return rows.size();
     }
 
@@ -89,23 +97,29 @@ public class CsvImportService implements ImportService {
     @Transactional
     public int importMatches(MultipartFile file) throws IOException {
         List<MatchCsvDto> rows = parseMatches(file.getInputStream());
-        for (int i = 0; i < rows.size(); i++) {
-            MatchCsvDto dto = rows.get(i);
+        Map<Long, Team> teamMap = teamRepository.findAll().stream().collect(Collectors.toMap(Team::getId, t -> t));
+        List<Match> matches = new ArrayList<>(rows.size());
+        for (MatchCsvDto dto : rows) {
             if (dto.getId() == null) {
                 throw new IllegalArgumentException("matches.csv row missing ID");
             }
-            Team aTeam = teamRepository.findById(dto.getaTeamId())
-                    .orElseThrow(() -> new IllegalStateException("Team not found for ATeamID: " + dto.getaTeamId() + ". Import teams first."));
-            Team bTeam = teamRepository.findById(dto.getbTeamId())
-                    .orElseThrow(() -> new IllegalStateException("Team not found for BTeamID: " + dto.getbTeamId() + ". Import teams first."));
+            Team aTeam = teamMap.get(dto.getaTeamId());
+            Team bTeam = teamMap.get(dto.getbTeamId());
+            if (aTeam == null) {
+                throw new IllegalStateException("Team not found for ATeamID: " + dto.getaTeamId() + ". Import teams first.");
+            }
+            if (bTeam == null) {
+                throw new IllegalStateException("Team not found for BTeamID: " + dto.getbTeamId() + ". Import teams first.");
+            }
             LocalDate date = DateParseUtil.parse(dto.getDateString());
             Match match = new Match();
             match.setaTeam(aTeam);
             match.setbTeam(bTeam);
             match.setDate(date);
             match.setScore(dto.getScore());
-            matchRepository.save(match);
+            matches.add(match);
         }
+        matchRepository.saveAll(matches);
         return rows.size();
     }
 
@@ -113,16 +127,21 @@ public class CsvImportService implements ImportService {
     @Transactional
     public int importRecords(MultipartFile file) throws IOException {
         List<RecordCsvDto> rows = parseRecords(file.getInputStream());
-        List<Record> records = new ArrayList<>();
-        for (int i = 0; i < rows.size(); i++) {
-            RecordCsvDto dto = rows.get(i);
+        Map<Long, Player> playerMap = playerRepository.findAll().stream().collect(Collectors.toMap(Player::getId, p -> p));
+        Map<Long, Match> matchMap = matchRepository.findAll().stream().collect(Collectors.toMap(Match::getId, m -> m));
+        List<Record> records = new ArrayList<>(rows.size());
+        for (RecordCsvDto dto : rows) {
             if (dto.getId() == null) {
                 throw new IllegalArgumentException("records.csv row missing ID");
             }
-            Player player = playerRepository.findById(dto.getPlayerId())
-                    .orElseThrow(() -> new IllegalStateException("Player not found for id: " + dto.getPlayerId() + ". Import players first."));
-            Match match = matchRepository.findById(dto.getMatchId())
-                    .orElseThrow(() -> new IllegalStateException("Match not found for id: " + dto.getMatchId() + ". Import matches first."));
+            Player player = playerMap.get(dto.getPlayerId());
+            Match match = matchMap.get(dto.getMatchId());
+            if (player == null) {
+                throw new IllegalStateException("Player not found for id: " + dto.getPlayerId() + ". Import players first.");
+            }
+            if (match == null) {
+                throw new IllegalStateException("Match not found for id: " + dto.getMatchId() + ". Import matches first.");
+            }
             Record record = new Record();
             record.setPlayer(player);
             record.setMatch(match);
@@ -132,6 +151,53 @@ public class CsvImportService implements ImportService {
         }
         recordRepository.saveAll(records);
         return rows.size();
+    }
+
+    @Override
+    @Transactional
+    public int deleteRecords() {
+        long count = recordRepository.count();
+        recordRepository.deleteAllInBatch();
+        recordRepository.resetIdSequence();
+        return (int) count;
+    }
+
+    @Override
+    @Transactional
+    public int deleteMatches() {
+        long count = matchRepository.count();
+        matchRepository.deleteAllInBatch();
+        matchRepository.resetIdSequence();
+        return (int) count;
+    }
+
+    @Override
+    @Transactional
+    public int deletePlayers() {
+        long count = playerRepository.count();
+        playerRepository.deleteAllInBatch();
+        playerRepository.resetIdSequence();
+        return (int) count;
+    }
+
+    @Override
+    @Transactional
+    public int deleteTeams() {
+        long count = teamRepository.count();
+        teamRepository.deleteAllInBatch();
+        teamRepository.resetIdSequence();
+        return (int) count;
+    }
+
+    @Override
+    @Transactional
+    public Map<String, Integer> deleteAll() {
+        Map<String, Integer> counts = new LinkedHashMap<>();
+        counts.put("records", deleteRecords());
+        counts.put("matches", deleteMatches());
+        counts.put("players", deletePlayers());
+        counts.put("teams", deleteTeams());
+        return counts;
     }
 
     private List<String[]> readCsvLines(InputStream inputStream) throws IOException {

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/matches")
-@CrossOrigin(origins = {"http://localhost:5173"})
+@CrossOrigin(origins = {"http://localhost:5173", "http://95.216.141.216"})
 public class MatchController {
 
     private static final Logger log = LoggerFactory.getLogger(MatchController.class);

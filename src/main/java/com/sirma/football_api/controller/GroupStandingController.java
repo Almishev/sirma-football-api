@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/groups/standings")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = {"http://localhost:5173", "http://95.216.141.216"})
 public class GroupStandingController {
 
     private static final Logger log = LoggerFactory.getLogger(GroupStandingController.class);

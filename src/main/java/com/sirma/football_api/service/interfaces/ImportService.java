@@ -23,7 +23,6 @@ public interface ImportService {
 
     int deleteTeams();
 
-    /** Deletes all data in dependency order: records → matches → players → teams. Returns deleted counts. */
     Map<String, Integer> deleteAll();
 }
 

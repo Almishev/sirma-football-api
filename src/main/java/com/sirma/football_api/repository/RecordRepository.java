@@ -14,6 +14,18 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
     List<Record> findByPlayerId(Long playerId);
 
     @Modifying
+    @Query("DELETE FROM Record r WHERE r.player.id = :playerId")
+    void deleteByPlayerId(Long playerId);
+
+    @Modifying
+    @Query("DELETE FROM Record r WHERE r.match.id = :matchId")
+    void deleteByMatchId(Long matchId);
+
+    @Modifying
+    @Query("DELETE FROM Record r WHERE r.player.id IN :playerIds")
+    void deleteByPlayerIdIn(List<Long> playerIds);
+
+    @Modifying
     @Query(value = "ALTER SEQUENCE records_id_seq RESTART WITH 1", nativeQuery = true)
     void resetIdSequence();
 }

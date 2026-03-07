@@ -1,5 +1,6 @@
 package com.sirma.football_api.service;
 
+import com.sirma.football_api.dto.PlayerShortDto;
 import com.sirma.football_api.dto.PlayerStatsDto;
 import com.sirma.football_api.entity.Player;
 import com.sirma.football_api.entity.Record;
@@ -8,6 +9,10 @@ import com.sirma.football_api.exception.ResourceNotFoundException;
 import com.sirma.football_api.repository.PlayerRepository;
 import com.sirma.football_api.repository.RecordRepository;
 import com.sirma.football_api.service.interfaces.PlayerStatsService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -83,6 +88,58 @@ public class PlayerStatsServiceImpl implements PlayerStatsService {
         dto.setTotalMinutes(totalMinutes);
         dto.setAverageMinutesPerMatch(averageMinutes);
 
+        return dto;
+    }
+
+    @Override
+    public List<PlayerShortDto> getAllPlayers() {
+        List<Player> players = playerRepository.findAllWithTeam();
+        List<PlayerShortDto> result = new java.util.ArrayList<>(players.size());
+        for (Player player : players) {
+            PlayerShortDto dto = new PlayerShortDto();
+            dto.setId(player.getId());
+            dto.setFullName(player.getFullName());
+            dto.setPosition(player.getPosition());
+            dto.setTeamNumber(player.getTeamNumber());
+            if (player.getTeam() != null) {
+                dto.setTeamId(player.getTeam().getId());
+                dto.setTeamName(player.getTeam().getName());
+            }
+            result.add(dto);
+        }
+        return result;
+    }
+
+    @Override
+    public Page<PlayerShortDto> getPlayersPage(Pageable pageable) {
+        Sort sort = pageable.getSort().isUnsorted()
+                ? Sort.by(Sort.Direction.ASC, "fullName")
+                : pageable.getSort();
+        Sort mappedSort = Sort.by(
+                sort.stream()
+                        .map(order -> {
+                            String property = order.getProperty();
+                            if ("teamName".equals(property)) {
+                                return new Sort.Order(order.getDirection(), "team.name");
+                            }
+                            return order;
+                        })
+                        .toList()
+        );
+        Pageable pageableWithSort = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), mappedSort);
+        return playerRepository.findAll(pageableWithSort).map(this::toPlayerShortDto);
+    }
+
+    private PlayerShortDto toPlayerShortDto(Player player) {
+        PlayerShortDto dto = new PlayerShortDto();
+        dto.setId(player.getId());
+        dto.setFullName(player.getFullName());
+        dto.setPosition(player.getPosition());
+        dto.setTeamNumber(player.getTeamNumber());
+        if (player.getTeam() != null) {
+            dto.setTeamId(player.getTeam().getId());
+            dto.setTeamName(player.getTeam().getName());
+        }
         return dto;
     }
 }

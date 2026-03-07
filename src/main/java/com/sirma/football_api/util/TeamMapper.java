@@ -2,6 +2,7 @@ package com.sirma.football_api.util;
 
 import com.sirma.football_api.dto.PlayerShortDto;
 import com.sirma.football_api.dto.TeamDetailsDto;
+import com.sirma.football_api.dto.TeamSummaryDto;
 import com.sirma.football_api.entity.Player;
 import com.sirma.football_api.entity.Team;
 
@@ -11,6 +12,14 @@ import java.util.List;
 public final class TeamMapper {
 
     private TeamMapper() {
+    }
+
+    public static TeamSummaryDto toTeamSummaryDto(Team team) {
+        TeamSummaryDto dto = new TeamSummaryDto();
+        dto.setId(team.getId());
+        dto.setName(team.getName());
+        dto.setGroupLetter(team.getGroupLetter());
+        return dto;
     }
 
     public static TeamDetailsDto toTeamDetailsDto(Team team, List<Player> players) {

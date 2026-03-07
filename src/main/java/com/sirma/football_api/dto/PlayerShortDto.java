@@ -6,6 +6,8 @@ public class PlayerShortDto {
     private Integer teamNumber;
     private String fullName;
     private String position;
+    private Long teamId;
+    private String teamName;
 
     public PlayerShortDto() {
     }
@@ -40,6 +42,22 @@ public class PlayerShortDto {
 
     public void setPosition(String position) {
         this.position = position;
+    }
+
+    public Long getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(Long teamId) {
+        this.teamId = teamId;
+    }
+
+    public String getTeamName() {
+        return teamName;
+    }
+
+    public void setTeamName(String teamName) {
+        this.teamName = teamName;
     }
 }
 

@@ -43,8 +43,8 @@ jobs:
             cd ~/app
             docker compose down
             docker compose pull
-            # Free port 8091 if still in use (e.g. by another container or TIME_WAIT)
-            for id in $(docker ps -q); do docker port "$id" 2>/dev/null | grep -q ':8091' && docker stop "$id"; done
+            # Free ports 80 and 8091 if still in use (e.g. by another container or TIME_WAIT)
+            for id in $(docker ps -q); do docker port "$id" 2>/dev/null | grep -qE ':80[^0-9]|:8091' && docker stop "$id"; done
             sleep 5
             docker compose up -d
 

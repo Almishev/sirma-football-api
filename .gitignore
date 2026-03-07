@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Google Cloud credentials (never commit) ###
+**/gcp-logging-key.json
+**/gcp-credentials*.json
+**/*-credentials*.json
+**/service-account*.json

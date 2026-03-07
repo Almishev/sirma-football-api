@@ -11,7 +11,8 @@ RUN ./mvnw dependency:go-offline -B
 COPY src src
 RUN ./mvnw package -DskipTests -B
 
-FROM eclipse-temurin:17-jre-alpine
+# Use Debian base (not Alpine): Netty/gRPC native SSL crashes on Alpine (musl)
+FROM eclipse-temurin:17-jre
 
 WORKDIR /app
 

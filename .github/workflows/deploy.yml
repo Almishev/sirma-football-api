@@ -41,9 +41,9 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd ~/app
-            # Stop any container using port 80 or 8091 first, then clean up
-            for id in $(docker ps -q); do docker port "$id" 2>/dev/null | grep -qE ':80[^0-9]|:8091' && docker stop "$id"; done
-            sleep 5
+            # Stop all running containers so ports 80 and 8091 are freed
+            docker stop $(docker ps -q) 2>/dev/null || true
+            sleep 8
             docker compose down
             docker compose pull
             docker compose up -d

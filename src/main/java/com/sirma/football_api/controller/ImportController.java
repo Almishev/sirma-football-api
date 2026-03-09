@@ -17,7 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/import")
-@CrossOrigin(origins = {"http://localhost:5173", "http://95.216.141.216"})
+@CrossOrigin(origins = {"http://localhost:5173", "http://95.216.141.216", "http://95.216.141.216.nip.io"})
 public class ImportController {
 
     private static final Logger log = LoggerFactory.getLogger(ImportController.class);

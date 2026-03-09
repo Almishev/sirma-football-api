@@ -13,13 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-/**
- * Endpoint for the main exam task: pairs of players who played together
- * in the same matches for the longest total time.
- */
 @RestController
 @RequestMapping("/api/stats/player-pairs")
-@CrossOrigin(origins = {"http://localhost:5173", "http://95.216.141.216"})
+@CrossOrigin(origins = {"http://localhost:5173", "http://95.216.141.216", "http://95.216.141.216.nip.io"})
 public class PlayerPairStatsController {
 
     private static final Logger log = LoggerFactory.getLogger(PlayerPairStatsController.class);

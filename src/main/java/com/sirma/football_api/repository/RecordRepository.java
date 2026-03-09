@@ -30,10 +30,6 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
     @Query(value = "ALTER SEQUENCE records_id_seq RESTART WITH 1", nativeQuery = true)
     void resetIdSequence();
 
-    /**
-     * Pairs of players who played together in the same matches, ordered by total minutes together (desc).
-     * NULL to_minutes is treated as 90 (end of match).
-     */
     @Query(value = """
         SELECT player1, player2, SUM(overlap) AS total_minutes
         FROM (

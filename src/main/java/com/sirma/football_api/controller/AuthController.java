@@ -1,8 +1,10 @@
 package com.sirma.football_api.controller;
 
 import com.sirma.football_api.dto.AuthResponse;
+import com.sirma.football_api.dto.ForgotPasswordRequest;
 import com.sirma.football_api.dto.LoginRequest;
 import com.sirma.football_api.dto.RegisterRequest;
+import com.sirma.football_api.dto.ResetPasswordRequest;
 import com.sirma.football_api.service.AuthService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -39,5 +41,18 @@ public class AuthController {
         AuthResponse response = authService.login(request);
         log.info("User logged in successfully: {}", request.getEmail());
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<Void> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        log.info("Password reset requested for email: {}", request.getEmail());
+        authService.requestPasswordReset(request);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<Void> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        authService.resetPassword(request);
+        return ResponseEntity.noContent().build();
     }
 }

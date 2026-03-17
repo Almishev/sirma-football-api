@@ -33,13 +33,6 @@ public class DonationService {
 
     @Transactional
     public Map<String, String> createCheckoutSession() throws StripeException {
-        Donation donation = new Donation();
-        donation.setAmountCents(100L);
-        donation.setCurrency("eur");
-        donation.setStatus("PENDING");
-        donation.setCreatedAt(Instant.now());
-        donation = donationRepository.save(donation);
-
         SessionCreateParams params =
                 SessionCreateParams.builder()
                         .setMode(SessionCreateParams.Mode.PAYMENT)
@@ -51,11 +44,15 @@ public class DonationService {
                                         .setPrice(DONATION_PRICE_ID)
                                         .build()
                         )
-                        .putMetadata("donationId", donation.getId().toString())
                         .build();
 
         Session session = Session.create(params);
 
+        Donation donation = new Donation();
+        donation.setAmountCents(100L);
+        donation.setCurrency("eur");
+        donation.setStatus("PENDING");
+        donation.setCreatedAt(Instant.now());
         donation.setStripeSessionId(session.getId());
         donationRepository.save(donation);
 

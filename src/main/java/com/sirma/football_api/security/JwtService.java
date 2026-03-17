@@ -50,7 +50,6 @@ public class JwtService {
                 .getPayload();
     }
 
-    @SuppressWarnings("unchecked")
     public List<String> getRoles(Claims claims) {
         List<?> list = claims.get("roles", List.class);
         if (list == null) return List.of();

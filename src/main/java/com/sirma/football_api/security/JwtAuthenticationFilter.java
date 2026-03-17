@@ -1,6 +1,5 @@
 package com.sirma.football_api.security;
 
-import com.sirma.football_api.entity.User;
 import com.sirma.football_api.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;

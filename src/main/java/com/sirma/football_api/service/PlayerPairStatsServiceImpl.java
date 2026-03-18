@@ -5,6 +5,7 @@ import com.sirma.football_api.entity.Player;
 import com.sirma.football_api.repository.PlayerRepository;
 import com.sirma.football_api.repository.RecordRepository;
 import com.sirma.football_api.service.interfaces.PlayerPairStatsService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class PlayerPairStatsServiceImpl implements PlayerPairStatsService {
     }
 
     @Override
+    @Cacheable(value = "playerPairs", key = "#limit")
     public List<PlayerPairOverlapDto> getPlayerPairsByMinutesPlayedTogether(int limit) {
         List<Object[]> rows = recordRepository.findTopPairsWithSubquery(limit);
         Set<Long> playerIds = rows.stream()
